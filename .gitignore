@@ -1,0 +1,13 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Large binaries and archives (>100MB limit on GitHub)
+*.zip
+LLAMA_CPP/runtime/
+LLAMA_CPP/*.zip

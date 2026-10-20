@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10120f">
+  <title>Prompt Grove — Prompt Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Prompt Grove home">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 18.7 12l8.6-2.6-5.4 7 5.4 7-8.6-2.6L16 29l-2.7-8.2-8.6 2.6 5.4-7-5.4-7 8.6 2.6L16 3.5Z"/><circle cx="16" cy="16.3" r="3.1"/></svg></span>
+        <span class="brand-copy"><strong>prompt<span>grove</span></strong><small>YOUR PROMPT LIBRARY</small></span>
+      </a>
+      <div class="topbar-center"><span class="status-dot"></span><span id="autosave-label">Your local workspace</span></div>
+      <div class="topbar-actions">
+        <button class="button button-ghost" id="import-trigger" type="button"><span class="button-icon">↥</span> Import JSON</button>
+        <a class="button button-ghost" href="/api/export" id="export-link"><span class="button-icon">↧</span> Export</a>
+        <button class="button button-primary" id="new-prompt-top" type="button"><span class="plus">+</span> New prompt</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <div class="sidebar-heading"><span>WORKSPACE</span><button id="refresh-button" class="icon-button" title="Refresh library" aria-label="Refresh library">⟳</button></div>
+        <button class="nav-item active" data-filter="all" id="all-prompts"><span class="nav-icon">▤</span><span>All prompts</span><span class="count-pill" id="all-count">0</span></button>
+        <button class="nav-item" data-filter="uncategorized" id="uncategorized-link"><span class="nav-icon">◌</span><span>Uncategorized</span><span class="count-pill" id="uncat-count">0</span></button>
+
+        <div class="sidebar-section-head"><span>YOUR CATEGORIES</span><span class="tiny-symbol">⌄</span></div>
+        <div id="category-tree" class="category-tree">
+          <div class="tree-loading"><span class="mini-loader"></span> Growing your grove…</div>
+        </div>
+        <button class="add-category-hint" id="add-category-prompt"><span>＋</span> Add a prompt category</button>
+
+        <div class="sidebar-bottom">
+          <div class="storage-card">
+            <div class="storage-icon">⌘</div>
+            <div><strong>Stored on this machine</strong><p>Your prompts live in a local SQLite database.</p></div>
+          </div>
+          <div class="sidebar-foot"><span class="tiny-leaf">✳</span> Built for your next idea.</div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <div class="main-topline">
+          <div class="breadcrumbs"><span>Library</span><span class="crumb-sep">/</span><strong id="breadcrumb-current">All prompts</strong></div>
+          <div class="view-switch" role="tablist" aria-label="Workspace view">
+            <button class="view-tab active" id="library-tab" role="tab" aria-selected="true"><span>▦</span> Library</button>
+            <button class="view-tab" id="graph-tab" role="tab" aria-selected="false"><span>⌘</span> Tree graph</button>
+          </div>
+        </div>
+
+        <section id="library-view" class="library-view">
+          <div class="page-heading-row">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-line"></span> THE IDEA GARDEN</div>
+              <h1 id="page-title">Every good idea<br><em>starts somewhere.</em></h1>
+              <p class="page-subtitle">A home for your prompts, their references, and the branches they grow into.</p>
+            </div>
+            <div class="heading-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-spark spark-one">✳</div><div class="art-spark spark-two">✦</div><div class="art-core">✳</div><div class="art-caption">IDEAS IN<br>PROGRESS</div></div>
+          </div>
+
+          <div class="collection-toolbar">
+            <div class="collection-title"><h2 id="collection-title">All prompts</h2><span id="visible-count" class="collection-count">0 items</span></div>
+            <div class="toolbar-tools">
+              <label class="search-box"><span class="search-icon">⌕</span><input type="search" id="search-input" placeholder="Find a prompt…" autocomplete="off"><kbd>⌘ K</kbd></label>
+              <select id="sort-select" class="sort-select" aria-label="Sort prompts"><option value="updated">Recently edited</option><option value="created">Recently added</option><option value="title">Title A–Z</option><option value="category">Category</option></select>
+            </div>
+          </div>
+
+          <div id="prompt-grid" class="prompt-grid"></div>
+          <div id="empty-state" class="empty-state" hidden>
+            <div class="empty-illustration"><span class="empty-plant">✳</span><span class="empty-orbit"></span></div>
+            <h3 id="empty-title">Nothing growing here yet.</h3>
+            <p id="empty-copy">Add your first prompt or import a JSON collection to get started.</p>
+            <div class="empty-actions"><button class="button button-primary" id="empty-new">＋ Create a prompt</button><button class="button button-ghost" id="empty-import">Import JSON ↥</button></div>
+          </div>
+          <div id="filter-empty" class="filter-empty" hidden>No prompts match this search. Try another phrase.</div>
+          <footer class="main-footer"><span><span class="footer-mark">✳</span> Prompt Grove <span class="footer-dot">·</span> Your ideas, taking shape.</span><span id="footer-count">0 prompts saved</span></footer>
+        </section>
+
+        <section id="graph-view" class="graph-view" hidden>
+          <div class="graph-heading-row">
+            <div><div class="eyebrow"><span class="eyebrow-line"></span> CONNECT THE DOTS</div><h1>Your prompt <em>tree.</em></h1><p class="page-subtitle">Explore how categories, subcategories, and prompts branch out together.</p></div>
+            <div class="graph-legend"><span><i class="legend-root"></i> Workspace</span><span><i class="legend-category"></i> Category</span><span><i class="legend-prompt"></i> Prompt</span></div>
+          </div>
+          <div class="graph-toolbar"><div><strong id="graph-node-count">0 nodes</strong><span> · Select any prompt node to edit it</span></div><button class="button button-small button-ghost" id="graph-refresh">↻ Rebuild graph</button></div>
+          <div id="graph-canvas" class="graph-canvas"><div class="graph-placeholder"><div class="mini-loader"></div><span>Mapping your branches…</span></div></div>
+          <div class="graph-note"><span>ⓘ</span> Tip: Use slashes in a category path to create subcategories, for example <code>Art / Anime / Cat_girl</code>.</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Prompt editor -->
+  <div class="modal-backdrop" id="prompt-modal" hidden>
+    <section class="modal modal-editor" role="dialog" aria-modal="true" aria-labelledby="editor-title">
+      <div class="modal-header"><div><div class="modal-kicker"><span class="green-dot"></span> PROMPT DETAILS</div><h2 id="editor-title">Plant a new prompt</h2><p>Keep the words, visual references, and context together.</p></div><button class="close-button" data-close="prompt-modal" aria-label="Close dialog">×</button></div>
+      <form id="prompt-form" class="editor-form">
+        <input type="hidden" id="prompt-id">
+        <div class="field-row">
+          <label class="field grow-field"><span>Prompt title <small>OPTIONAL</small></span><input id="prompt-title" type="text" placeholder="e.g. Soft-lit cat girl portrait" maxlength="120"></label>
+        </div>
+        <label class="field"><span>Category path <small>USE / FOR SUBCATEGORIES</small></span><input id="prompt-category" type="text" placeholder="Character art / Anime / Cat_girl" autocomplete="off"><span class="field-help">Nested paths automatically build your tree graph.</span></label>
+        <label class="field"><span>Prompt text <b class="required-mark">*</b></span><textarea id="prompt-text" rows="5" required placeholder="masterpiece, 1girl, solo, catgirl…"></textarea><span class="field-bottom"><span>Paste your full prompt here. It stays easy to copy.</span><span id="prompt-char-count">0 chars</span></span></label>
+
+        <div class="field"><span class="field-label">Image preview <small>OPTIONAL</small></span>
+          <div class="image-input-layout">
+            <div id="editor-image-preview" class="editor-image-preview"><div class="preview-placeholder"><span>▧</span><small>IMAGE PREVIEW</small></div></div>
+            <div class="image-fields">
+              <label class="field compact-field"><span>Image URL or local path</span><input id="prompt-image" type="text" placeholder="/static/uploads/reference.png or https://…"></label>
+              <div class="upload-row"><label class="button button-ghost button-upload" for="image-file"><span>↥</span> Upload image</label><input id="image-file" type="file" accept="image/*" hidden><span id="upload-status" class="upload-status">PNG, JPG, WEBP · 12 MB max</span></div>
+              <p class="field-help">Uploaded images are stored in this project’s static/uploads folder.</p>
+            </div>
+          </div>
+        </div>
+        <label class="field"><span>Notes <small>OPTIONAL</small></span><textarea id="prompt-notes" rows="2" placeholder="Model, settings, what worked, or what to change…"></textarea></label>
+        <label class="field"><span>Tags <small>OPTIONAL · COMMA SEPARATED</small></span><input id="prompt-tags" type="text" placeholder="portrait, lighting, character design"></label>
+        <div class="modal-footer"><button type="button" id="delete-prompt" class="button button-danger" hidden>Delete prompt</button><div class="modal-footer-right"><button type="button" class="button button-ghost" data-close="prompt-modal">Cancel</button><button type="submit" class="button button-primary" id="save-prompt"><span>✓</span> Save prompt</button></div></div>
+        <div id="editor-error" class="form-error" role="alert" hidden></div>
+      </form>
+    </section>
+  </div>
+
+  <!-- JSON import -->
+  <div class="modal-backdrop" id="import-modal" hidden>
+    <section class="modal modal-import" role="dialog" aria-modal="true" aria-labelledby="import-title">
+      <div class="modal-header"><div><div class="modal-kicker"><span class="green-dot"></span> BRING YOUR IDEAS IN</div><h2 id="import-title">Import a JSON collection</h2><p>Turn your existing prompt data into a living tree.</p></div><button class="close-button" data-close="import-modal" aria-label="Close dialog">×</button></div>
+      <div class="import-format"><div class="format-icon">{ }</div><div><strong>Supported prompt format</strong><code>{ "Catagory": "Cat_girl", "Promt": "masterpiece, 1girl…", "image_preview": "/static/uploads/ref.png" }</code><p>Accepts <b>Catagory</b> or <b>Category</b>, and <b>Promt</b> or <b>Prompt</b>. Use an object or an array of objects.</p></div></div>
+      <div class="import-drop"><label class="button button-ghost" for="json-file">Choose a .json file</label><input type="file" id="json-file" accept=".json,application/json" hidden><span id="json-file-name">or paste JSON below</span></div>
+      <label class="field"><span>JSON DATA</span><textarea id="json-input" rows="10" spellcheck="false" placeholder='[
+  {
+    "Catagory": "Character art / Cat_girl",
+    "Promt": "masterpiece, 1girl, solo, catgirl",
+    "image_preview": "/static/uploads/reference.png"
+  }
+]'></textarea></label>
+      <div class="import-footer"><div class="field-help">Existing prompts won’t be overwritten; imported items are added to your library.</div><div><button class="button button-ghost" data-close="import-modal">Cancel</button> <button class="button button-primary" id="run-import">Import prompts ↥</button></div></div>
+      <div id="import-error" class="form-error" role="alert" hidden></div>
+    </section>
+  </div>
+
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

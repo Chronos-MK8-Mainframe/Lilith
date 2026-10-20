@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eef2ff"><title>Playground — AI Waifu</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-cluster"><div class="brand-mark">✦</div><div><div class="brand-title">Playground</div><div class="brand-subtitle">AI Waifu / <span>LM Studio</span></div></div></div>
+    <div class="top-status"><div class="status-line"><span id="statusLabel">Connecting…</span><span id="statusPercent">—</span></div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="status-meta"><span id="modelStatus">No model selected</span><span class="debug-chip"><i></i> Local backend</span></div></div>
+  </header>
+  <aside class="sidebar" aria-label="Main navigation">
+    <button class="nav-button tiny-plus" id="newChatBtn" title="New chat" aria-label="New chat">＋</button><div class="nav-divider"></div>
+    <button class="nav-button active" id="homeNav" title="Home" aria-label="Home"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></button>
+    <button class="nav-button" id="chatNav" title="Chat" aria-label="Chat"><svg viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7l-5 3v-3H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></button>
+    <button class="nav-button" id="profileNav" title="Character profile" aria-label="Character profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2z"/></svg></button>
+    <button class="nav-button bottom-nav" id="settingsNav" title="Settings" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="m19.2 13.7 1.1.9-1.5 2.6-1.3-.5a7.8 7.8 0 0 1-1.5.9l-.2 1.4h-3l-.2-1.4a7.8 7.8 0 0 1-1.5-.9l-1.3.5-1.5-2.6 1.1-.9a7 7 0 0 1 0-1.7l-1.1-.9 1.5-2.6 1.3.5a7.8 7.8 0 0 1 1.5-.9l.2-1.4h3l.2 1.4a7.8 7.8 0 0 1 1.5.9l1.3-.5 1.5 2.6-1.1.9a7 7 0 0 1 0 1.7Z" transform="translate(-1 -1)"/></svg></button>
+  </aside>
+  <main class="stage" id="stage">
+    <div class="image-wash"></div>
+    <div class="right-rail"><button class="round-tool" id="inspectorBtn" title="Character state" aria-label="Character state"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button><button class="round-tool" id="micBtn" title="Voice input" aria-label="Voice input"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/></svg></button><button class="round-tool" id="focusBtn" title="Toggle immersive mode" aria-label="Toggle immersive mode"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="m17 10 4-3v10l-4-3z"/></svg></button></div>
+    <div class="hero-caption"><span class="caption-dot"></span><span id="heroCharacterName">Aoi</span><span class="caption-separator">·</span><span id="heroModelName">Your local companion</span></div>
+    <section class="conversation-card" id="conversationCard" aria-label="Conversation">
+      <div class="conversation-header"><div class="ai-label"><span class="sparkle">✦</span><span id="chatCharacterLabel">AI Waifu</span></div><div class="header-actions"><span class="local-badge"><i></i> Local</span><button class="icon-button" id="downloadStateBtn" title="Download character state" aria-label="Download character state"><svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 17v3h14v-3"/></svg></button></div></div>
+      <div class="message-list" id="messageList" aria-live="polite"></div>
+      <div class="typing-row" id="typingRow" hidden><span class="typing-dots"><i></i><i></i><i></i></span><span id="typingText">Aoi is thinking…</span></div>
+      <form id="chatForm" class="composer"><textarea id="messageInput" rows="1" maxlength="12000" placeholder="Say something to Aoi…  (Enter to send)" aria-label="Your message"></textarea><div class="composer-bottom"><div class="composer-hint"><span class="keycap">↵</span> to send <span class="hint-divider">·</span><span id="contextHint">Character state updates every turn</span></div><div class="composer-actions"><button type="button" class="soft-action" id="emotionQuickBtn">Emotion</button><button type="submit" class="send-button" id="sendBtn" aria-label="Send message"><svg viewBox="0 0 24 24"><path d="M5 4.5 20 12 5 19.5l2-7.5z"/></svg></button></div></div></form>
+    </section>
+  </main>
+  <aside class="inspector" id="inspector" aria-label="Character inspector" hidden><div class="inspector-head"><div><span class="eyebrow">LIVE CHARACTER DATA</span><h2>Inner world</h2></div><button class="close-button" id="closeInspectorBtn" aria-label="Close inspector">×</button></div><div class="inspector-tabs"><button class="tab active" data-tab="state">State JSON</button><button class="tab" data-tab="emotion">Emotion</button><button class="tab" data-tab="raw">Raw output</button></div><div class="inspector-content" id="inspectorContent"></div></aside>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="overlay" id="settingsOverlay" hidden><section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="panel-heading"><div><div class="eyebrow">PHASE 01 · LOCAL INFERENCE</div><h2 id="settingsTitle">Playground settings</h2><p>Connect to the LM Studio OpenAI-compatible server.</p></div><button class="close-button" id="closeSettingsBtn" aria-label="Close settings">×</button></div>
+  <div class="settings-scroll">
+    <div class="section-title"><span class="section-number">01</span><span>Backend</span></div><label class="field-label" for="baseUrlInput">LM Studio base URL</label><input class="text-input" id="baseUrlInput" type="url" value="http://localhost:1234/v1" spellcheck="false"><div class="field-note">Start the Local Server in LM Studio. Usually port 1234 with the <code>/v1</code> suffix.</div>
+    <label class="field-label" for="apiKeyInput">API key <span class="optional">optional</span></label><input class="text-input" id="apiKeyInput" type="password" placeholder="Leave blank unless your server requires one" autocomplete="off"><div class="field-row"><button class="secondary-button" id="refreshModelsBtn" type="button"><span class="refresh-icon">↻</span> Refresh models</button><span class="connection-message" id="connectionMessage">Not connected</span></div>
+    <div class="section-title section-spaced"><span class="section-number">02</span><span>Models</span></div><label class="field-label" for="rpModelInput">Roleplay model <span class="required">required</span></label><input class="text-input" id="rpModelInput" list="modelOptions" placeholder="Refresh models or type a model ID" autocomplete="off"><label class="field-label" for="emotionModelInput">Emotion tracker model <span class="optional">blank = same model</span></label><input class="text-input" id="emotionModelInput" list="modelOptions" placeholder="Same as roleplay model" autocomplete="off"><datalist id="modelOptions"></datalist><div class="field-note">The emotion sub-agent runs after each roleplay response, using a model served by LM Studio.</div><label class="field-label" for="temperatureInput">Roleplay temperature <span id="temperatureValue" class="range-value">0.80</span></label><input class="range-input" id="temperatureInput" type="range" min="0" max="2" step="0.05" value="0.8">
+    <div class="section-title section-spaced"><span class="section-number">03</span><span>Character</span></div><label class="field-label" for="characterNameInput">Character name</label><input class="text-input" id="characterNameInput" value="Aoi" maxlength="120"><label class="field-label" for="personaInput">Persona / character definition</label><textarea class="text-input text-area" id="personaInput" rows="3">A gentle, teasing, affectionate anime companion who is attentive and emotionally expressive.</textarea><label class="field-label" for="systemPromptInput">Roleplay system prompt <span class="optional">additional instructions</span></label><textarea class="text-input text-area" id="systemPromptInput" rows="4">Stay in character, respond naturally, and preserve continuity. Never control the user's actions, thoughts, or dialogue. Use vivid but concise dialogue, small actions, and emotional nuance.</textarea>
+    <div class="section-title section-spaced"><span class="section-number">04</span><span>Per-turn state JSON</span></div><p class="field-note wide-note">Edit the state shape below. Each model reply should be one JSON object with <code>reply</code> and <code>state</code> top-level keys.</p><textarea class="text-input text-area json-editor" id="stateTemplateInput" rows="10" spellcheck="false">{
+  "mood": "neutral",
+  "emotion_intensity": 20,
+  "affection": 10,
+  "energy": 70,
+  "relationship": "getting to know each other",
+  "inner_thought": "",
+  "actions": [],
+  "memories": []
+}</textarea>
+    <div class="panel-footer"><button class="text-button" id="resetSettingsBtn" type="button">Reset defaults</button><button class="primary-button" id="saveSettingsBtn" type="button">Save settings</button></div>
+  </div>
+</section></div>
+<script src="/static/app.js" defer></script>
+</body></html>

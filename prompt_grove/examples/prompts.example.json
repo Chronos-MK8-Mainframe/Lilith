@@ -1,0 +1,26 @@
+[
+  {
+    "Catagory": "Character art / Anime / Cat_girl",
+    "Promt": "masterpiece, 1girl, solo, catgirl, soft rim lighting, detailed eyes",
+    "image_preview": "",
+    "title": "Cat girl — soft rim lighting",
+    "notes": "Add a reference image from the editor when you have one.",
+    "tags": ["character", "anime", "lighting"]
+  },
+  {
+    "Category": "Environment / Dreamlike forest",
+    "Prompt": "ancient forest, floating pollen, volumetric light, cinematic composition, fine detail",
+    "image_preview": "",
+    "title": "Dreamlike forest",
+    "notes": "Try a wide aspect ratio for environmental studies.",
+    "tags": ["environment", "forest", "cinematic"]
+  },
+  {
+    "Catagory": "Character art / Portrait studies",
+    "Promt": "editorial portrait, natural window light, subtle film grain, textured background, 85mm lens",
+    "image_preview": "",
+    "title": "Window-lit portrait",
+    "notes": "Reference prompt for lighting and lens language.",
+    "tags": ["portrait", "photography"]
+  }
+]
